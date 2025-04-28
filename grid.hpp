@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "program_data.hpp"
 #include <memory>
 
 template <size_t N>
