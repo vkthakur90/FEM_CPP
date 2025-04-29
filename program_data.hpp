@@ -7,10 +7,10 @@ struct ProgramData {
     size_t size{N};
     
     struct {
-        float k_xx{0.0f};
-        float k_xy{0.0f};
-        float k_yy{0.0f};
-    } cond; 
+        float k_xx[N][N]{};
+        float k_xy[N][N]{};
+        float k_yy[N][N]{};
+    } conductivity_tensor; 
     
     struct {
         float length_x{1.0};
@@ -20,11 +20,14 @@ struct ProgramData {
     struct {
         alignas(SIMD_SIZE/alignof(float)) float x[N][N]{};
         alignas(SIMD_SIZE/alignof(float)) float y[N][N]{};
-        alignas(SIMD_SIZE/alignof(float)) float q[N][N]{};
-        alignas(SIMD_SIZE/alignof(float)) float T[N][N]{};
         float delta_x{0.0f};
         float delta_y{0.0f};
     } grid;
+    
+    struct {
+        alignas(SIMD_SIZE/alignof(float)) float q[N][N]{};
+        alignas(SIMD_SIZE/alignof(float)) float T[N][N]{}; 
+    } bulk_condition;
     
     struct {
         alignas(SIMD_SIZE/alignof(float)) float top[N]{};
@@ -88,8 +91,14 @@ struct ProgramData {
     } quad;
     
     struct {
+        alignas(SIMD_SIZE/alignof(float)) float mat_xx[N][N][3][3]{};
+        alignas(SIMD_SIZE/alignof(float)) float mat_xy[N][N][3][3]{};
+        alignas(SIMD_SIZE/alignof(float)) float mat_yy[N][N][3][3]{};
         alignas(SIMD_SIZE/alignof(float)) float mat[N][N][3][3]{};
         alignas(SIMD_SIZE/alignof(float)) float heat_gen[N][N]{};
+        float coeff_xx[3][3];
+        float coeff_xy[3][3];
+        float coeff_yy[3][3];
     } discretized;
     
     struct {
