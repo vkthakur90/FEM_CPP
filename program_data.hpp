@@ -2,6 +2,8 @@
 
 #define SIMD_SIZE 512
 
+#include <cstddef>
+
 template <size_t N>
 struct ProgramData {
     size_t size{N};
@@ -98,6 +100,10 @@ struct ProgramData {
         float coeff_xx[3][3];
         float coeff_xy[3][3];
         float coeff_yy[3][3];
+        float diff_phi_curr_times_diff_phi[3]{};
+        float diff_phi_curr_times_phi[3]{};
+        float phi_curr_times_diff_phi[3]{};
+        float phi_curr_times_phi[3]{};
     } discretized;
     
     struct {
