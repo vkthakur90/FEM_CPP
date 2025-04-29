@@ -4,6 +4,34 @@
 #include <memory>
 #include <cmath>
 
+float linear_shape_fn(float x){
+    float y;
+    
+    if (x >= 0.0f && x <= 1.0f) {
+        y = 1.0f - x;
+    } else if (x >= -1.0f && x < 0.0f) {
+        y = 1.0f + x;
+    } else {
+        y = 0.0f;
+    }
+    
+    return y;
+}
+
+float cubic_shape_fn(float x){
+    float y;
+    
+    if (x >= 0.0f && x <= 1.0f) {
+        y = 1.0f - 3.0f * std::pow(x, 2) + 2.0f * std::pow(x, 3);
+    } else if (x >= -1.0f && x < 0.0f) {
+        y = 1.0f - 3.0f * std::pow(-x, 2) + 2.0f * std::pow(-x, 3);
+    } else {
+        y = 0.0f;
+    }
+    
+    return y;
+}
+
 template <size_t N>
 void ProgramData_computeQuadU(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
     constexpr float factor = (static_cast<float>(SIMPSON_SIZE) - 1.0f) / 2.0f;
@@ -27,7 +55,7 @@ void ProgramData_computeQuadPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & ref_u = data_ptr->quad.u[idx][jdx]; 
-            data_ptr->quad.phi.curr[idx][jdx] = (ref_u > 0.0f) ? 1.0f - ref_u : 1.0f + ref_u;
+            data_ptr->quad.phi.curr[idx][jdx] = cubic_shape_fn(ref_u);
         }
     }
 }
@@ -38,7 +66,7 @@ void ProgramData_computeQuadPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & ref_u = data_ptr->quad.u[idx][jdx];
-            data_ptr->quad.phi.next[idx][jdx] = (ref_u > 0.0f) ? ref_u : 0.0f;
+            data_ptr->quad.phi.next[idx][jdx] = cubic_shape_fn(ref_u - 1);
         }
     }
 }
@@ -49,14 +77,15 @@ void ProgramData_computeQuadPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & ref_u = data_ptr->quad.u[idx][jdx];
-            data_ptr->quad.phi.prev[idx][jdx] = (ref_u < 0.0f) ? -ref_u : 0.0f;
+            data_ptr->quad.phi.prev[idx][jdx] = cubic_shape_fn(ref_u + 1);
         }
     }
 }
 
 template <size_t N>
 void ProgramData_computeQuadDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    float h = 1.0f/1000.0f;
+    constexpr float factor = (static_cast<float>(SIMPSON_SIZE) - 1.0f) / 2.0f;
+    constexpr float h = 1.0/factor;
     #pragma omp parallel for simd schedule(static) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         data_ptr->quad.diff_phi.curr[idx]  = data_ptr->quad.phi.curr[idx][2];
@@ -67,7 +96,8 @@ void ProgramData_computeQuadDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_p
 
 template <size_t N>
 void ProgramData_computeQuadDiffPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    float h = 1.0f/1000.0f;
+    constexpr float factor = (static_cast<float>(SIMPSON_SIZE) - 1.0f) / 2.0f;
+    constexpr float h = 1.0/factor;
     #pragma omp parallel for simd schedule(static) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         data_ptr->quad.diff_phi.prev[idx]  = data_ptr->quad.phi.prev[idx][2];
@@ -78,7 +108,8 @@ void ProgramData_computeQuadDiffPhiPrev(std::unique_ptr<ProgramData<N>> & data_p
 
 template <size_t N>
 void ProgramData_computeQuadDiffPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    float h = 1.0f/1000.0f;
+    constexpr float factor = (static_cast<float>(SIMPSON_SIZE) - 1.0f) / 2.0f;
+    constexpr float h = 1.0/factor;
     #pragma omp parallel for simd schedule(static) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         data_ptr->quad.diff_phi.next[idx]  = data_ptr->quad.phi.next[idx][2];
