@@ -3,18 +3,18 @@
 #define SIMD_SIZE 512
 
 template <size_t N>
-struct alignas(SIMD_SIZE) ProgramData {
+struct ProgramData {
     size_t size{N};
     
     struct {
-        alignas(alignof(float)) float k_xx{0.0f};
-        alignas(alignof(float)) float k_xy{0.0f};
-        alignas(alignof(float)) float k_yy{0.0f};
+        float k_xx{0.0f};
+        float k_xy{0.0f};
+        float k_yy{0.0f};
     } cond; 
     
     struct {
-        alignas(alignof(float)) float length_x{1.0};
-        alignas(alignof(float)) float length_y{1.0};
+        float length_x{1.0};
+        float length_y{1.0};
     } sim_box;
     
     struct {
@@ -22,8 +22,8 @@ struct alignas(SIMD_SIZE) ProgramData {
         alignas(SIMD_SIZE/alignof(float)) float y[N][N]{};
         alignas(SIMD_SIZE/alignof(float)) float q[N][N]{};
         alignas(SIMD_SIZE/alignof(float)) float T[N][N]{};
-        alignas(alignof(float)) float delta_x{0.0f};
-        alignas(alignof(float)) float delta_y{0.0f};
+        float delta_x{0.0f};
+        float delta_y{0.0f};
     } grid;
     
     struct {
@@ -52,46 +52,39 @@ struct alignas(SIMD_SIZE) ProgramData {
            alignas(SIMD_SIZE/alignof(float)) float curr[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float prev[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float next[2001][3]{};
+           float curr_integ;
+           float prev_integ;
+           float next_integ;
         } diff_phi_curr_times_diff_phi;
         
         struct {
            alignas(SIMD_SIZE/alignof(float)) float curr[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float prev[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float next[2001][3]{};
+           float curr_integ;
+           float prev_integ;
+           float next_integ;
         } diff_phi_curr_times_phi;
         
         struct {
            alignas(SIMD_SIZE/alignof(float)) float curr[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float prev[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float next[2001][3]{};
+           float curr_integ;
+           float prev_integ;
+           float next_integ;
         } phi_curr_times_diff_phi;
         
         struct {
            alignas(SIMD_SIZE/alignof(float)) float curr[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float prev[2001][3]{};
            alignas(SIMD_SIZE/alignof(float)) float next[2001][3]{};
-        } phi_times_phi;
+           float curr_integ;
+           float prev_integ;
+           float next_integ;
+        } phi_curr_times_phi;
         
-        struct {
-            alignas(alignof(float)) float diff_phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float diff_phi_curr_times_phi{};
-            alignas(alignof(float)) float phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float phi_curr_times_phi{};
-        } integ_curr;
-        
-        struct {
-            alignas(alignof(float)) float diff_phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float diff_phi_curr_times_phi{};
-            alignas(alignof(float)) float phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float phi_curr_times_phi{};
-        } integ_prev;
-        
-        struct {
-            alignas(alignof(float)) float diff_phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float diff_phi_curr_times_phi{};
-            alignas(alignof(float)) float phi_curr_times_diff_phi{};
-            alignas(alignof(float)) float phi_curr_times_phi{};
-        } integ_next;
+        alignas(SIMD_SIZE/alignof(float)) float simpson[2001]{};
     } quad;
     
     struct {

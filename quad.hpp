@@ -21,11 +21,549 @@ void ProgramData_computeQuadU(std::unique_ptr<ProgramData<N>> & data_ptr) noexce
 
 
 template <size_t N>
-void ProgramData_computePhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+void ProgramData_computeQuadPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             data_ptr->quad.phi.curr[idx][jdx] = 1 - std::fabs(data_ptr->quad.phi.u[idx][jdx]);
         }
     }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            data_ptr->quad.phi.curr[idx][jdx] = (idx > 1000) ? data_ptr->quad.phi.u[idx][jdx] : 0.0f;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            data_ptr->quad.phi.curr[idx][jdx] = (idx < 1000) ? -(data_ptr->quad.phi.u[idx][jdx]) : 0.0f;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static) 
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.diff_phi.curr[idx]  = data_ptr->quad.phi.curr[idx][2];
+        data_ptr->quad.diff_phi.curr[idx] -= data_ptr->quad.phi.curr[idx][0];
+        data_ptr->quad.diff_phi.curr[idx] /= h;
+    }
+} 
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static) 
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.diff_phi.prev[idx]  = data_ptr->quad.phi.prev[idx][2];
+        data_ptr->quad.diff_phi.prev[idx] -= data_ptr->quad.phi.prev[idx][0];
+        data_ptr->quad.diff_phi.prev[idx] /= h;
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static) 
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.diff_phi.next[idx]  = data_ptr->quad.phi.next[idx][2];
+        data_ptr->quad.diff_phi.next[idx] -= data_ptr->quad.phi.next[idx][0];
+        data_ptr->quad.diff_phi.next[idx] /= h;
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.diff_phi.curr[idx];
+            data_ptr->quad.diff_phi_curr_times_diff_phi.curr[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.diff_phi.curr[idx];
+            data_ptr->quad.diff_phi_curr_times_diff_phi.curr[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.diff_phi.prev[idx];
+            data_ptr->quad.diff_phi_curr_times_diff_phi.prev[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.diff_phi.next[idx];
+            data_ptr->quad.diff_phi_curr_times_diff_phi.next[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.phi.curr[idx][jdx];
+            data_ptr->quad.diff_phi_curr_times_phi.curr[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.phi.prev[idx][jdx];
+            data_ptr->quad.diff_phi_curr_times_phi.prev[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.diff_phi.curr[idx];
+            temp *= data_ptr->quad.phi.next[idx][jdx];
+            data_ptr->quad.diff_phi_curr_times_phi.next[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.diff_phi.curr[idx];
+            data_ptr->quad.phi_curr_times_diff_phi.curr[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.diff_phi.prev[idx];
+            data_ptr->quad.phi_curr_times_diff_phi.prev[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.diff_phi.next[idx];
+            data_ptr->quad.phi_curr_times_diff_phi.next[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.phi.curr[idx][idx];
+            data_ptr->quad.phi_curr_times_phi.curr[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.phi.prev[idx][idx];
+            data_ptr->quad.phi_curr_times_phi.prev[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    #pragma omp parallel for simd schedule(static) collapse(2)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        for(size_t jdx = 0; jdx < 3; ++jdx){
+            float temp;
+            temp  = data_ptr->quad.phi.curr[idx][jdx];
+            temp *= data_ptr->quad.phi.next[idx][idx];
+            data_ptr->quad.phi_curr_times_phi.next[idx][jdx] = temp;
+        }
+    }
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiCurrInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_diff_phi.curr[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_diff_phi.curr[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_diff_phi.curr[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_diff_phi.curr_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiPrevInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_diff_phi.prev[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_diff_phi.prev[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_diff_phi.prev[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_diff_phi.prev_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhiNextInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_diff_phi.next[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_diff_phi.next[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_diff_phi.next[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_diff_phi.next_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiCurrInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_phi.curr[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_phi.curr[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_phi.curr[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_phi.curr_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiPrevInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_phi.prev[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_phi.prev[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_phi.prev[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_phi.prev_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhiNextInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.diff_phi_curr_times_phi.next[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.diff_phi_curr_times_phi.next[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.diff_phi_curr_times_phi.next[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.diff_phi_curr_times_phi.next_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiCurrInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_diff_phi.curr[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_diff_phi.curr[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_diff_phi.curr[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_diff_phi.curr_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiPrevInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_diff_phi.prev[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_diff_phi.prev[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_diff_phi.prev[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_diff_phi.prev_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhiNextInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_diff_phi.next[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_diff_phi.next[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_diff_phi.next[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_diff_phi.next_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiCurrInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_phi.curr[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_phi.curr[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_phi.curr[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_phi.curr_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiPrevInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_phi.prev[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_phi.prev[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_phi.prev[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_phi.prev_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhiNextInteg(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    float h = 1.0f/1000.0f;
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        data_ptr->quad.simpson[idx]  = data_ptr->quad.phi_curr_times_phi.next[idx][0];
+        data_ptr->quad.simpson[idx] += 4.0f * data_ptr->quad.phi_curr_times_phi.next[idx][1];
+        data_ptr->quad.simpson[idx] += data_ptr->quad.phi_curr_times_phi.next[idx][2];
+        data_ptr->quad.simpson[idx] /= 6.0f;
+        data_ptr->quad.simpson[idx] *= h;
+    }
+    
+    float sum = 0;
+    #pragma omp parallel for simd schedule(static) reduction(+:sum)
+    for(size_t idx = 0; idx < 2001; ++idx){
+        sum += data_ptr->quad.simpson[idx];
+    }
+    
+    data_ptr->quad.phi_curr_times_phi.next_integ = sum;
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadPhiCurr(data_ptr);
+    ProgramData_computeQuadPhiPrev(data_ptr);
+    ProgramData_computeQuadPhiNext(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadDiffPhiCurr(data_ptr);
+    ProgramData_computeQuadDiffPhiPrev(data_ptr);
+    ProgramData_computeQuadDiffPhiNext(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiCurr(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiPrev(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiNext(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiCurrInteg(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiPrevInteg(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhiNextInteg(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuadDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadDiffPhiCurrTimesPhiCurr(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhiPrev(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhiNext(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhiCurrInteg(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhiPrevInteg(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhiNextInteg(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadPhiCurrTimesDiffPhiCurr(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhiPrev(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhiNext(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhiCurrInteg(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhiPrevInteg(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhiNextInteg(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuadPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadPhiCurrTimesPhiCurr(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhiPrev(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhiNext(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhiCurrInteg(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhiPrevInteg(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhiNextInteg(data_ptr);
+}
+
+template <size_t N>
+void ProgramData_computeQuad(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeQuadPhi(data_ptr);
+    ProgramData_computeQuadDiffPhi(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesDiffPhi(data_ptr);
+    ProgramData_computeQuadDiffPhiCurrTimesPhi(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesDiffPhi(data_ptr);
+    ProgramData_computeQuadPhiCurrTimesPhi(data_ptr);
 }
