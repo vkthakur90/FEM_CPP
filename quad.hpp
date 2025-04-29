@@ -25,7 +25,10 @@ void ProgramData_computeQuadPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            data_ptr->quad.phi.curr[idx][jdx] = 1 - std::fabs(data_ptr->quad.phi.u[idx][jdx]);
+            auto & u = data_ptr->quad.phi.u[idx][jdx]; 
+            data_ptr->quad.phi.curr[idx][jdx]  = u;
+            data_ptr->quad.phi.curr[idx][jdx] *= (u > 0) ? -1.0f : 1.0f;
+            data_ptr->quad.phi.curr[idx][jdx] += 1.0f;
         }
     }
 }
@@ -35,7 +38,8 @@ void ProgramData_computeQuadPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            data_ptr->quad.phi.curr[idx][jdx] = (idx > 1000) ? data_ptr->quad.phi.u[idx][jdx] : 0.0f;
+            auto & u = data_ptr->quad.phi.u[idx][jdx];
+            data_ptr->quad.phi.curr[idx][jdx] = (idx > 1000) ? u : 0.0f;
         }
     }
 }
@@ -45,7 +49,8 @@ void ProgramData_computeQuadPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            data_ptr->quad.phi.curr[idx][jdx] = (idx < 1000) ? -(data_ptr->quad.phi.u[idx][jdx]) : 0.0f;
+            auto & u = data_ptr->quad.phi.u[idx][jdx];
+            data_ptr->quad.phi.curr[idx][jdx] = (idx < 1000) ? -u : 0.0f;
         }
     }
 }
