@@ -208,10 +208,10 @@ void ProgramData_computeQuadPhiCurrTimesPhiCurr(std::unique_ptr<ProgramData<N>> 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            float temp;
-            temp  = data_ptr->quad.phi.curr[idx][jdx];
-            temp *= data_ptr->quad.phi.curr[idx][idx];
-            data_ptr->quad.phi_curr_times_phi.curr[idx][jdx] = temp;
+            auto & ref_in = data_ptr->quad.phi.curr[idx][jdx];
+            auto & ref_result = data_ptr->quad.phi_curr_times_phi.curr[idx][jdx];
+            
+            ref_result = ref_in * ref_in;
         }
     }
 }
@@ -221,10 +221,11 @@ void ProgramData_computeQuadPhiCurrTimesPhiPrev(std::unique_ptr<ProgramData<N>> 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            float temp;
-            temp  = data_ptr->quad.phi.curr[idx][jdx];
-            temp *= data_ptr->quad.phi.prev[idx][idx];
-            data_ptr->quad.phi_curr_times_phi.prev[idx][jdx] = temp;
+            auto & ref_curr = data_ptr->quad.phi.curr[idx][jdx];
+            auto & ref_other = data_ptr->quad.phi.prev[idx][jdx];
+            auto & ref_result = data_ptr->quad.phi_curr_times_phi.prev[idx][jdx];
+            
+            ref_result = ref_curr * ref_other;
         }
     }
 }
@@ -234,10 +235,11 @@ void ProgramData_computeQuadPhiCurrTimesPhiNext(std::unique_ptr<ProgramData<N>> 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < 2001; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
-            float temp;
-            temp  = data_ptr->quad.phi.curr[idx][jdx];
-            temp *= data_ptr->quad.phi.next[idx][idx];
-            data_ptr->quad.phi_curr_times_phi.next[idx][jdx] = temp;
+            auto & ref_curr = data_ptr->quad.phi.curr[idx][jdx];
+            auto & ref_other = data_ptr->quad.phi.next[idx][jdx];
+            auto & ref_result = data_ptr->quad.phi_curr_times_phi.next[idx][jdx];
+            
+            ref_result = ref_curr * ref_other;
         }
     }
 }

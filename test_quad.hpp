@@ -44,3 +44,22 @@ void ProgramData_displayPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept
         );
     }
 }
+
+template <size_t N>
+void ProgramData_displayPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    for(size_t idx = 0; idx < 2001; ++idx){
+        std::printf(
+            "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
+            data_ptr->quad.u[idx][1],
+            data_ptr->quad.phi_curr_times_phi.prev[idx][0],
+            data_ptr->quad.phi_curr_times_phi.prev[idx][1],
+            data_ptr->quad.phi_curr_times_phi.prev[idx][2],
+            data_ptr->quad.phi_curr_times_phi.curr[idx][0],
+            data_ptr->quad.phi_curr_times_phi.curr[idx][1],
+            data_ptr->quad.phi_curr_times_phi.curr[idx][2],
+            data_ptr->quad.phi_curr_times_phi.next[idx][0],
+            data_ptr->quad.phi_curr_times_phi.next[idx][1],
+            data_ptr->quad.phi_curr_times_phi.next[idx][2]
+        );
+    }
+}
