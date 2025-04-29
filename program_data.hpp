@@ -95,7 +95,6 @@ struct ProgramData {
         alignas(SIMD_SIZE/alignof(float)) float mat_xy[N][N][3][3]{};
         alignas(SIMD_SIZE/alignof(float)) float mat_yy[N][N][3][3]{};
         alignas(SIMD_SIZE/alignof(float)) float mat[N][N][3][3]{};
-        alignas(SIMD_SIZE/alignof(float)) float heat_gen[N][N]{};
         float coeff_xx[3][3];
         float coeff_xy[3][3];
         float coeff_yy[3][3];
@@ -104,6 +103,6 @@ struct ProgramData {
     struct {
         alignas(SIMD_SIZE/alignof(float)) float mat[N*N][N*N]{};
         alignas(SIMD_SIZE/alignof(float)) float heat_gen[N*N]{};
-        alignas(SIMD_SIZE/alignof(float)) float c[N*N]; 
+        alignas(SIMD_SIZE/alignof(float)) float soln[N*N]; 
     } solution;   
 };
