@@ -13,6 +13,8 @@ int main(){
     ProgramData_computeGrid(data_ptr);
     ProgramData_computeDescretized(data_ptr);
     
+    ProgramData_displayTests(data_ptr);
+    
     return 0;
 }
 
