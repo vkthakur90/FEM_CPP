@@ -9,12 +9,6 @@ struct ProgramData {
     size_t size{N};
     
     struct {
-        float k_xx[N][N]{};
-        float k_xy[N][N]{};
-        float k_yy[N][N]{};
-    } conductivity_tensor; 
-    
-    struct {
         float length_x{1.0};
         float length_y{1.0};
     } sim_box;
@@ -27,9 +21,11 @@ struct ProgramData {
     } grid;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float q[N][N]{};
-        alignas(SIMD_SIZE/alignof(float)) float T[N][N]{}; 
-    } bulk_condition;
+        alignas(SIMD_SIZE/alignof(float)) float gen_q[N][N]{0.0f};
+        alignas(SIMD_SIZE/alignof(float)) float k_xx[N][N]{1.0f};
+        alignas(SIMD_SIZE/alignof(float)) float k_xy[N][N]{0.0f};
+        alignas(SIMD_SIZE/alignof(float)) float k_yy[N][N]{1.0f}; 
+    } bulk_property;
     
     struct {
         alignas(SIMD_SIZE/alignof(float)) float top[N]{};
@@ -93,17 +89,19 @@ struct ProgramData {
     } quad;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float mat_xx[N][N][3][3]{};
-        alignas(SIMD_SIZE/alignof(float)) float mat_xy[N][N][3][3]{};
-        alignas(SIMD_SIZE/alignof(float)) float mat_yy[N][N][3][3]{};
-        alignas(SIMD_SIZE/alignof(float)) float mat[N][N][3][3]{};
-        float coeff_xx[3][3];
-        float coeff_xy[3][3];
-        float coeff_yy[3][3];
         float diff_phi_curr_times_diff_phi[3]{};
         float diff_phi_curr_times_phi[3]{};
         float phi_curr_times_diff_phi[3]{};
         float phi_curr_times_phi[3]{};
+        
+        float coeff_xx[3][3];
+        float coeff_xy[3][3];
+        float coeff_yy[3][3];
+    } integrals;
+    
+    struct {
+        alignas(SIMD_SIZE/alignof(float)) float mat[N][N][3][3]{};
+        alignas(SIMD_SIZE/alignof(float)) float gen[N][N]
     } discretized;
     
     struct {
