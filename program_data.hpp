@@ -109,8 +109,8 @@ struct ProgramData {
     } discretized;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float mat[N*N][N*N]{};
-        alignas(SIMD_SIZE/alignof(float)) float heat_gen[N*N]{};
+        alignas(SIMD_SIZE/alignof(float)) float mat[N*N][N*N]{0.0f};
+        alignas(SIMD_SIZE/alignof(float)) float heat_gen[N*N]{0.0f};
         alignas(SIMD_SIZE/alignof(float)) float soln[N*N]; 
     } lin_alg_solve;   
 };
