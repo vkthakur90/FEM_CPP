@@ -1,28 +1,7 @@
 #pragma once
 
 #include "program_data.hpp"
-#include <cstdio>
-#include <memory>
-#include <stdexcept>  // for std::runtime_error
-
-// Factory: opens a FILE* and wraps it in unique_ptr with a lambda deleter.
-// Throws std::runtime_error if fopen fails.
-auto make_unique_file(const char* filename, const char* mode) {
-    auto closer = [](FILE* f) noexcept {
-        if (f) std::fclose(f);
-    };
-
-    FILE* raw = std::fopen(filename, mode);  
-    if (!raw) {
-        // fopen returns nullptr on failure
-        throw std::runtime_error(std::string("Unable to open file '")
-                                 + filename + "'");  // report which file failed
-    }
-
-    return std::unique_ptr<FILE, decltype(closer)>(raw, closer);
-}
-
-
+#include "utils.hpp"
 
 template <size_t N>
 void ProgramData_displayQuad(std::unique_ptr<ProgramData<N>> & data_ptr) {
@@ -181,6 +160,7 @@ void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
     
     std::fprintf(file.get(), "\n\nCoeff XX\n");
     for(size_t idx = 0; idx < 3; ++idx){
+        std::fprintf(file.get(), "i_%d", idx);
         for(size_t jdx = 0; jdx < 3; ++jdx){
             std::fprintf(file.get(), "\t%f", data_ptr->integrals.coeff_xx[idx][jdx]);
         }
@@ -189,6 +169,7 @@ void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
     
     std::fprintf(file.get(), "\n\nCoeff XY\n");
     for(size_t idx = 0; idx < 3; ++idx){
+        std::fprintf(file.get(), "i_%d", idx);
         for(size_t jdx = 0; jdx < 3; ++jdx){
             std::fprintf(file.get(), "\t%f", data_ptr->integrals.coeff_xy[idx][jdx]);
         }
@@ -197,6 +178,7 @@ void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
     
     std::fprintf(file.get(), "\n\nCoeff YY\n");
     for(size_t idx = 0; idx < 3; ++idx){
+        std::fprintf(file.get(), "i_%d", idx);
         for(size_t jdx = 0; jdx < 3; ++jdx){
             std::fprintf(file.get(), "\t%f", data_ptr->integrals.coeff_yy[idx][jdx]);
         }

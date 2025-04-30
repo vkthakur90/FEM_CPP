@@ -1,7 +1,7 @@
 #pragma once
 
 #define SIMD_SIZE 512
-#define SIMPSON_SIZE 2001
+#define SIMPSON_SIZE 20001
 
 #include <cstddef>
 
