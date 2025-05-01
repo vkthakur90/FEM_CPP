@@ -201,14 +201,17 @@ void ProgramData_displayLinAlgSolveMat(std::unique_ptr<ProgramData<N>> & data_pt
 }
 
 template <size_t N>
-void ProgramData_displayBulkPropertyKxx(std::unique_ptr<ProgramData<N>> & data_ptr) {
-    auto file = make_unique_file("outputs/bulk_property_kxx.txt", "w");
+void ProgramData_displayBulkPropertyConductivity(std::unique_ptr<ProgramData<N>> & data_ptr) {
+    auto file = make_unique_file("outputs/bulk_property_k.txt", "w");
     
     auto & NUM = data_ptr->size;
     for(size_t idx = 0; idx < NUM; ++idx){
         for(size_t jdx = 0; jdx < NUM; ++jdx){
-            auto & result = data_ptr->bulk_property.k_xx[idx][jdx];
-            std::fprintf(file.get(), "%d\t%d\t\t%f\n", idx, jdx, result);
+            auto & ref_kxx = data_ptr->bulk_property.k_xx[idx][jdx];
+            auto & ref_kxy = data_ptr->bulk_property.k_xy[idx][jdx];
+            auto & ref_kyy = data_ptr->bulk_property.k_yy[idx][jdx];
+            std::fprintf(file.get(), "%d\t%d\t\t%f\t%f\t%f\n", idx, jdx, 
+                         ref_kxx, ref_kxy, ref_kyy);
         }
         std::fprintf(file.get(), "\n");
     }    
@@ -242,6 +245,6 @@ void ProgramData_displayTests(std::unique_ptr<ProgramData<N>> & data_ptr){
     ProgramData_displayQuad(data_ptr);
     ProgramData_displayIntegrals(data_ptr);
     ProgramData_displayLinAlgSolveMat(data_ptr);
-    ProgramData_displayBulkPropertyKxx(data_ptr);
+    ProgramData_displayBulkPropertyConductivity(data_ptr);
     ProgramData_displayDiscretizedMat(data_ptr);
 }
