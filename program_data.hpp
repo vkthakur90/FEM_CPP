@@ -22,17 +22,17 @@ struct ProgramData {
     } grid;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float q_rate[N][N]{1.0f};
-        alignas(SIMD_SIZE/alignof(float)) float k_xx[N][N]{1.0f};
-        alignas(SIMD_SIZE/alignof(float)) float k_xy[N][N]{0.0f};
-        alignas(SIMD_SIZE/alignof(float)) float k_yy[N][N]{1.0f}; 
+        alignas(SIMD_SIZE/alignof(float)) float q_rate[N][N]{};
+        alignas(SIMD_SIZE/alignof(float)) float k_xx[N][N]{};
+        alignas(SIMD_SIZE/alignof(float)) float k_xy[N][N]{};
+        alignas(SIMD_SIZE/alignof(float)) float k_yy[N][N]{}; 
     } bulk_property;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float top[N]{0.0f};
-        alignas(SIMD_SIZE/alignof(float)) float bottom[N]{0.0f};
-        alignas(SIMD_SIZE/alignof(float)) float left[N]{0.0f};
-        alignas(SIMD_SIZE/alignof(float)) float right[N]{0.0f};
+        alignas(SIMD_SIZE/alignof(float)) float top[N]{};
+        alignas(SIMD_SIZE/alignof(float)) float bottom[N]{};
+        alignas(SIMD_SIZE/alignof(float)) float left[N]{};
+        alignas(SIMD_SIZE/alignof(float)) float right[N]{};
     } boundary;
     
     struct {
@@ -95,9 +95,9 @@ struct ProgramData {
         float phi_curr_times_diff_phi[3]{};
         float phi_curr_times_phi[3]{};
         
-        float coeff_xx[3][3];
-        float coeff_xy[3][3];
-        float coeff_yy[3][3];
+        float coeff_xx[3][3]{};
+        float coeff_xy[3][3]{};
+        float coeff_yy[3][3]{};
     } integrals;
     
     struct {
@@ -109,8 +109,8 @@ struct ProgramData {
     } discretized;
     
     struct {
-        alignas(SIMD_SIZE/alignof(float)) float mat[N*N][N*N]{0.0f};
-        alignas(SIMD_SIZE/alignof(float)) float heat_gen[N*N]{0.0f};
+        alignas(SIMD_SIZE/alignof(float)) float mat[N*N][N*N]{};
+        alignas(SIMD_SIZE/alignof(float)) float heat_gen[N*N]{};
         alignas(SIMD_SIZE/alignof(float)) float soln[N*N]; 
     } lin_alg_solve;   
 };

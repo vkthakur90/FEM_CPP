@@ -2,16 +2,17 @@
 #define MAX_N 10
 #endif
 
+#include "read_inputs.hpp"
 #include "subroutines.hpp"
+#include "test.hpp"
 #include <memory>
 
 int main(){
     auto data_ptr = std::make_unique<ProgramData<MAX_N>>();
     
-    ProgramData_computeQuad(data_ptr);
-    ProgramData_computeIntegrals(data_ptr);
-    ProgramData_computeGrid(data_ptr);
-    ProgramData_computeDescretized(data_ptr);
+    ProgramData_readInputs(data_ptr);
+
+    ProgramData_compute(data_ptr);
     
     ProgramData_displayTests(data_ptr);
     

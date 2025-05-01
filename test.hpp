@@ -187,6 +187,51 @@ void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
 }
 
 template <size_t N>
+void ProgramData_displayLinAlgSolveMat(std::unique_ptr<ProgramData<N>> & data_ptr) {
+    auto file = make_unique_file("outputs/lin_alg_solve_mat_out.txt", "w");
+    
+    auto & NUM = data_ptr->size;
+    for(size_t idx = 0; idx < NUM * NUM; ++idx){
+        for(size_t jdx = 0; jdx < NUM * NUM; ++jdx){
+            auto & result = data_ptr->lin_alg_solve.mat[idx][jdx];
+            std::fprintf(file.get(), "%d\t%d\t\t%f\n", idx, jdx, result);
+        }
+        std::fprintf(file.get(), "\n");
+    }    
+}
+
+template <size_t N>
+void ProgramData_displayBulkPropertyKxx(std::unique_ptr<ProgramData<N>> & data_ptr) {
+    auto file = make_unique_file("outputs/bulk_property_kxx.txt", "w");
+    
+    auto & NUM = data_ptr->size;
+    for(size_t idx = 0; idx < NUM; ++idx){
+        for(size_t jdx = 0; jdx < NUM; ++jdx){
+            auto & result = data_ptr->bulk_property.k_xx[idx][jdx];
+            std::fprintf(file.get(), "%d\t%d\t\t%f\n", idx, jdx, result);
+        }
+        std::fprintf(file.get(), "\n");
+    }    
+}
+
+template <size_t N>
+void ProgramData_displayDiscretizedMat(std::unique_ptr<ProgramData<N>> & data_ptr) {
+    auto file = make_unique_file("outputs/discretized_mat.txt", "w");
+
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            for(size_t mdx = 0; mdx < 3; ++mdx){
+                for(size_t ndx = 0; ndx < 3; ++ndx){
+                    auto & result = data_ptr->discretized.mat[idx][jdx][mdx][ndx];;
+                    std::fprintf(file.get(), "%d\t%d\t%d\t%d\t\t%f\n", idx, jdx, mdx, ndx, result);
+                }
+            }
+            std::fprintf(file.get(), "\n");
+        }
+    }        
+}
+
+template <size_t N>
 void ProgramData_displayTests(std::unique_ptr<ProgramData<N>> & data_ptr){
     ProgramData_displayPhi(data_ptr);
     ProgramData_displayDiffPhi(data_ptr);
@@ -196,4 +241,7 @@ void ProgramData_displayTests(std::unique_ptr<ProgramData<N>> & data_ptr){
     ProgramData_displayPhiCurrTimesPhi(data_ptr);
     ProgramData_displayQuad(data_ptr);
     ProgramData_displayIntegrals(data_ptr);
+    ProgramData_displayLinAlgSolveMat(data_ptr);
+    ProgramData_displayBulkPropertyKxx(data_ptr);
+    ProgramData_displayDiscretizedMat(data_ptr);
 }

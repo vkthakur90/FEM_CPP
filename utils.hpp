@@ -33,8 +33,6 @@ float cubic_shape_fn(float x){
     return y;
 }
 
-// Factory: opens a FILE* and wraps it in unique_ptr with a lambda deleter.
-// Throws std::runtime_error if fopen fails.
 auto make_unique_file(const char* filename, const char* mode) {
     auto closer = [](FILE* f) noexcept {
         if (f) std::fclose(f);
