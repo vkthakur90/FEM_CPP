@@ -1,8 +1,9 @@
 #pragma once
 
 #define SIMD_SIZE 512
-#define SIMPSON_SIZE 20001
+#define SIMPSON_SIZE 2001
 
+#include "utils.hpp"
 #include <cstddef>
 
 template <size_t N>
@@ -10,8 +11,8 @@ struct ProgramData {
     size_t size{N};
     
     struct {
-        float length_x{1.0};
-        float length_y{1.0};
+        float length_x{1.0f};
+        float length_y{1.0f};
     } sim_box;
     
     struct {
@@ -36,6 +37,8 @@ struct ProgramData {
     } boundary;
     
     struct {
+        ShapeFunction shape{CUBIC};
+        
         alignas(SIMD_SIZE/alignof(float)) float u[SIMPSON_SIZE][3]{};
         
         struct {

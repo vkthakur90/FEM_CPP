@@ -32,7 +32,7 @@ template <size_t N>
 void ProgramData_displayPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
@@ -54,7 +54,7 @@ template <size_t N>
 void ProgramData_displayDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t\t%f\t\t%f\n",
@@ -70,7 +70,7 @@ template <size_t N>
 void ProgramData_displayPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_times_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
@@ -92,7 +92,7 @@ template <size_t N>
 void ProgramData_displayDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_times_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
@@ -114,7 +114,7 @@ template <size_t N>
 void ProgramData_displayPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_times_diff_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
@@ -136,7 +136,7 @@ template <size_t N>
 void ProgramData_displayDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_times_diff_phi_out.txt", "w");
     
-    for(size_t idx = 0; idx < 2001; ++idx){
+    for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         std::fprintf(
             file.get(),
             "%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\t\t%f\t%f\t%f\n",
@@ -225,8 +225,16 @@ void ProgramData_displayDiscretizedMat(std::unique_ptr<ProgramData<N>> & data_pt
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             for(size_t mdx = 0; mdx < 3; ++mdx){
                 for(size_t ndx = 0; ndx < 3; ++ndx){
-                    auto & result = data_ptr->discretized.mat[idx][jdx][mdx][ndx];;
-                    std::fprintf(file.get(), "%d\t%d\t%d\t%d\t\t%f\n", idx, jdx, mdx, ndx, result);
+                    auto & ref_mat_xx = data_ptr->discretized.mat_xx[idx][jdx][mdx][ndx];
+                    auto & ref_mat_xy = data_ptr->discretized.mat_xy[idx][jdx][mdx][ndx];
+                    auto & ref_mat_yy = data_ptr->discretized.mat_yy[idx][jdx][mdx][ndx];
+                    auto & ref_mat = data_ptr->discretized.mat[idx][jdx][mdx][ndx];
+                    std::fprintf(
+                        file.get(),
+                        "%d\t%d\t%d\t%d\t\t%f\t%f\t%f\t%f\n",
+                        idx, jdx, mdx, ndx, 
+                        ref_mat_xx, ref_mat_xy, ref_mat_yy, ref_mat
+                    );
                 }
             }
             std::fprintf(file.get(), "\n");

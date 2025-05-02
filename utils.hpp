@@ -5,28 +5,62 @@
 #include <stdexcept>
 #include <cmath>
 
-float linear_shape_fn(float x){
-    float y;
-    
-    if (x >= 0.0f && x <= 1.0f) {
-        y = 1.0f - x;
-    } else if (x >= -1.0f && x < 0.0f) {
-        y = 1.0f + x;
-    } else {
-        y = 0.0f;
-    }
-    
-    return y;
+enum ShapeFunction {
+    LINEAR,
+    CUBIC,
+    QUINTIC    
+};
+
+inline float linear_fn(float x){
+    return 1.0f - x; 
 }
 
-float cubic_shape_fn(float x){
+inline float cubic_fn(float x){
+    return 1.0f - 3.0f * std::pow(x, 2) + 2.0f * std::pow(x, 3);
+}
+
+inline quintic_fn(float x){
+    return 1.0f - 10.0 * std::pow(x, 3) + 15.0f * std::pow(x, 4) - 6.0f * std::pow(x, 5);
+}
+
+inline float shape_fn(ShapeFunction shape, float x){
     float y;
     
-    if (x >= 0.0f && x <= 1.0f) {
-        y = 1.0f - 3.0f * std::pow(x, 2) + 2.0f * std::pow(x, 3);
-    } else if (x >= -1.0f && x < 0.0f) {
-        y = 1.0f - 3.0f * std::pow(-x, 2) + 2.0f * std::pow(-x, 3);
-    } else {
+    switch(shape){
+    case LINEAR:
+        if (x >= 0.0f && x <= 1.0f) {
+            y = linear_fn(x);
+        } else if (x >= -1.0f && x < 0.0f) {
+            y = linear_fn(-x);
+        } else {
+            y = 0.0f;
+        }
+        
+        break;
+        
+    case CUBIC:
+        if (x >= 0.0f && x <= 1.0f) {
+            y = cubic_fn(x);
+        } else if (x >= -1.0f && x < 0.0f) {
+            y = cubic_fn(-x);
+        } else {
+            y = 0.0f;
+        }
+        
+        break;
+        
+    case QUINTIC:
+        if (x >= 0.0f && x <= 1.0f) {
+            y = quintic_fn(x);
+        } else if (x >= -1.0f && x < 0.0f) {
+            y = quintic_fn(-x);
+        } else {
+            y = 0.0f;
+        }
+        
+        break;
+        
+    default:
         y = 0.0f;
     }
     

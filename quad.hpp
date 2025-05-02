@@ -28,8 +28,9 @@ void ProgramData_computeQuadPhiCurr(std::unique_ptr<ProgramData<N>> & data_ptr) 
     #pragma omp parallel for simd schedule(static) collapse(2)
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
+            auto & ref_shape = data_ptr->quad.shape;
             auto & ref_u = data_ptr->quad.u[idx][jdx]; 
-            data_ptr->quad.phi.curr[idx][jdx] = cubic_shape_fn(ref_u);
+            data_ptr->quad.phi.curr[idx][jdx] = shape_fn(ref_shape, ref_u);
         }
     }
 }
@@ -40,7 +41,8 @@ void ProgramData_computeQuadPhiNext(std::unique_ptr<ProgramData<N>> & data_ptr) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & ref_u = data_ptr->quad.u[idx][jdx];
-            data_ptr->quad.phi.next[idx][jdx] = cubic_shape_fn(ref_u - 1);
+            auto & ref_shape = data_ptr->quad.shape;
+            data_ptr->quad.phi.next[idx][jdx] = shape_fn(ref_shape, ref_u - 1);
         }
     }
 }
@@ -51,7 +53,8 @@ void ProgramData_computeQuadPhiPrev(std::unique_ptr<ProgramData<N>> & data_ptr) 
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & ref_u = data_ptr->quad.u[idx][jdx];
-            data_ptr->quad.phi.prev[idx][jdx] = cubic_shape_fn(ref_u + 1);
+            auto & ref_shape = data_ptr->quad.shape;
+            data_ptr->quad.phi.prev[idx][jdx] = shape_fn(ref_shape, ref_u + 1);
         }
     }
 }
