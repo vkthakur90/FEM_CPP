@@ -7,8 +7,8 @@
 #include "discretized.hpp"
 #include "lin_alg_solve_mat.hpp"
 
-template <size_t N>
-void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_compute(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     ProgramData_computeQuad(data_ptr);
     ProgramData_computeIntegrals(data_ptr);
     ProgramData_computeGrid(data_ptr);

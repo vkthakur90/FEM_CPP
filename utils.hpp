@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <stdexcept>
 #include <cmath>
+#include <concepts>
+#include <cstddef>
 
 enum ShapeFunction {
     LINEAR,
@@ -11,20 +13,24 @@ enum ShapeFunction {
     QUINTIC    
 };
 
-inline float linear_fn(float x){
+template <std::floating_point Type>
+inline Type linear_fn(Type x){
     return 1.0f - x; 
 }
 
-inline float cubic_fn(float x){
+template <std::floating_point Type>
+inline Type cubic_fn(Type x){
     return 1.0f - 3.0f * std::pow(x, 2) + 2.0f * std::pow(x, 3);
 }
 
-inline quintic_fn(float x){
+template <std::floating_point Type>
+inline Type quintic_fn(Type x){
     return 1.0f - 10.0 * std::pow(x, 3) + 15.0f * std::pow(x, 4) - 6.0f * std::pow(x, 5);
 }
 
-inline float shape_fn(ShapeFunction shape, float x){
-    float y;
+template <std::floating_point Type>
+inline Type shape_fn(ShapeFunction shape, Type x){
+    Type y;
     
     switch(shape){
     case LINEAR:

@@ -8,7 +8,7 @@
 #include <memory>
 
 int main(){
-    auto data_ptr = std::make_unique<ProgramData<MAX_N>>();
+    auto data_ptr = std::make_unique<ProgramData<float, MAX_N>>();
     
     ProgramData_readInputs(data_ptr);
 

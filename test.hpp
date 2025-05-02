@@ -3,8 +3,8 @@
 #include "program_data.hpp"
 #include "utils.hpp"
 
-template <size_t N>
-void ProgramData_displayQuad(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayQuad(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_out.txt", "w");
     
     std::fprintf(file.get(), "integ D(phi_curr) x D(phi_prev) = %f\n", data_ptr->quad.diff_phi_curr_times_diff_phi.prev_integ);
@@ -28,8 +28,8 @@ void ProgramData_displayQuad(std::unique_ptr<ProgramData<N>> & data_ptr) {
     std::fprintf(file.get(), "\n");
 }
 
-template <size_t N>
-void ProgramData_displayPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -50,8 +50,8 @@ void ProgramData_displayPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     }
 }
 
-template <size_t N>
-void ProgramData_displayDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayDiffPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -66,8 +66,8 @@ void ProgramData_displayDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
     }
 }
 
-template <size_t N>
-void ProgramData_displayPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayPhiCurrTimesPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_times_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -88,8 +88,8 @@ void ProgramData_displayPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_p
     }
 }
 
-template <size_t N>
-void ProgramData_displayDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_times_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -110,8 +110,8 @@ void ProgramData_displayDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<N>> & da
     }
 }
 
-template <size_t N>
-void ProgramData_displayPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_phi_times_diff_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -132,8 +132,8 @@ void ProgramData_displayPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & da
     }
 }
 
-template <size_t N>
-void ProgramData_displayDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/quad_diff_phi_times_diff_phi_out.txt", "w");
     
     for(size_t idx = 0; idx < SIMPSON_SIZE; ++idx){
@@ -154,8 +154,8 @@ void ProgramData_displayDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<N>> 
     }
 }
 
-template <size_t N>
-void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/integrals_out.txt", "w");
     
     std::fprintf(file.get(), "\n\nCoeff XX\n");
@@ -186,8 +186,8 @@ void ProgramData_displayIntegrals(std::unique_ptr<ProgramData<N>> & data_ptr) {
     }
 }
 
-template <size_t N>
-void ProgramData_displayLinAlgSolveMat(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayLinAlgSolveMat(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/lin_alg_solve_mat_out.txt", "w");
     
     auto & NUM = data_ptr->size;
@@ -200,8 +200,8 @@ void ProgramData_displayLinAlgSolveMat(std::unique_ptr<ProgramData<N>> & data_pt
     }    
 }
 
-template <size_t N>
-void ProgramData_displayBulkPropertyConductivity(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayBulkPropertyConductivity(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/bulk_property_k.txt", "w");
     
     auto & NUM = data_ptr->size;
@@ -217,8 +217,8 @@ void ProgramData_displayBulkPropertyConductivity(std::unique_ptr<ProgramData<N>>
     }    
 }
 
-template <size_t N>
-void ProgramData_displayDiscretizedMat(std::unique_ptr<ProgramData<N>> & data_ptr) {
+template <std::floating_point Type, size_t N>
+void ProgramData_displayDiscretizedMat(std::unique_ptr<ProgramData<Type, N>> & data_ptr) {
     auto file = make_unique_file("outputs/discretized_mat.txt", "w");
 
     for(size_t idx = 0; idx < data_ptr->size ; ++idx){
@@ -242,8 +242,8 @@ void ProgramData_displayDiscretizedMat(std::unique_ptr<ProgramData<N>> & data_pt
     }        
 }
 
-template <size_t N>
-void ProgramData_displayTests(std::unique_ptr<ProgramData<N>> & data_ptr){
+template <std::floating_point Type, size_t N>
+void ProgramData_displayTests(std::unique_ptr<ProgramData<Type, N>> & data_ptr){
     ProgramData_displayPhi(data_ptr);
     ProgramData_displayDiffPhi(data_ptr);
     ProgramData_displayDiffPhiCurrTimesDiffPhi(data_ptr);

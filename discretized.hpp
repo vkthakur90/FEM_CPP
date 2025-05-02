@@ -2,8 +2,8 @@
 
 #include "program_data.hpp"
 
-template <size_t N>
-void ProgramData_computeDescretizedMatXX(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretizedMatXX(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     #pragma omp parallel for simd schedule(static) collapse(4)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -21,8 +21,8 @@ void ProgramData_computeDescretizedMatXX(std::unique_ptr<ProgramData<N>> & data_
     }
 }
 
-template <size_t N>
-void ProgramData_computeDescretizedMatXY(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretizedMatXY(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     #pragma omp parallel for simd schedule(static) collapse(4)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -41,8 +41,8 @@ void ProgramData_computeDescretizedMatXY(std::unique_ptr<ProgramData<N>> & data_
     }
 }
 
-template <size_t N>
-void ProgramData_computeDescretizedMatYY(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretizedMatYY(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     #pragma omp parallel for simd schedule(static) collapse(4)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -60,8 +60,8 @@ void ProgramData_computeDescretizedMatYY(std::unique_ptr<ProgramData<N>> & data_
     }
 }
 
-template <size_t N>
-void ProgramData_computeDescretizedMat(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretizedMat(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     #pragma omp parallel for simd schedule(static) collapse(4)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -81,8 +81,8 @@ void ProgramData_computeDescretizedMat(std::unique_ptr<ProgramData<N>> & data_pt
     }
 }
 
-template <size_t N>
-void ProgramData_computeDescretizedGenRate(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretizedGenRate(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             auto & ref_in = data_ptr->bulk_property.q_rate[idx][jdx];
@@ -93,8 +93,8 @@ void ProgramData_computeDescretizedGenRate(std::unique_ptr<ProgramData<N>> & dat
     } 
 }
 
-template <size_t N>
-void ProgramData_computeDescretized(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <std::floating_point Type, size_t N>
+void ProgramData_computeDescretized(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
     ProgramData_computeDescretizedMatXX(data_ptr);
     ProgramData_computeDescretizedMatXY(data_ptr);
     ProgramData_computeDescretizedMatYY(data_ptr);
