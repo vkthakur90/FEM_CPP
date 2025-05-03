@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "program_data.hpp"
 #include <memory>
 #include <cstdio>
 #include <stdexcept>
@@ -7,11 +8,7 @@
 #include <concepts>
 #include <cstddef>
 
-enum ShapeFunction {
-    LINEAR,
-    CUBIC,
-    QUINTIC    
-};
+
 
 template <std::floating_point Type>
 inline Type linear_fn(Type x){

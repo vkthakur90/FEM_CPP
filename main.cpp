@@ -7,9 +7,9 @@
 #include "test.hpp"
 #include <memory>
 
-int main(){
-    auto data_ptr = std::make_unique<ProgramData<float, MAX_N>>();
-    
+auto data_ptr = std::make_unique<ProgramData<double, MAX_N>>();
+
+int main(){    
     ProgramData_readInputs(data_ptr);
 
     ProgramData_compute(data_ptr);
