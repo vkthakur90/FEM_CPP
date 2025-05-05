@@ -5,7 +5,7 @@ MAX_N ?= 100
 CFLAGS = --std=c++20 -O3 -march=native -fopenmp -fopenmp-simd -DMAX_N=$(MAX_N)
 
 # Target executable name and source files
-TARGET = prog_cpp
+TARGET = ./outputs/prog_cpp
 SRCS = main.cpp
 
 # Rule to build the target executable
