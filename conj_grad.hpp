@@ -173,7 +173,7 @@ void ProgramData_computeConjGradY(upProgramData<Type, N> & data_ptr) noexcept {
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeCongGradR(upProgramData<Type, N> & data_ptr) noexcept {
+void ProgramData_computeConjGradR(upProgramData<Type, N> & data_ptr) noexcept {
     #pragma omp parallel for simd collapse(2) schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -187,7 +187,7 @@ void ProgramData_computeCongGradR(upProgramData<Type, N> & data_ptr) noexcept {
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeCongGradP(upProgramData<Type, N> & data_ptr) noexcept {
+void ProgramData_computeConjGradP(upProgramData<Type, N> & data_ptr) noexcept {
     #pragma omp parallel for simd collapse(2) schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
@@ -340,7 +340,7 @@ void ProgramData_updateConjGradR(upProgramData<Type, N> & data_ptr) noexcept {
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             auto & ref_r = data_ptr->conj_grad.r[idx][jdx];
             auto & ref_q = data_ptr->conj_grad.q[idx][jdx];
-            ref_r -= ref_alpha * ref_p;
+            ref_r -= ref_alpha * ref_q;
         }
     }
 }
@@ -350,9 +350,54 @@ void ProgramData_computeConjGradBeta(upProgramData<Type, N> & data_ptr) noexcept
     auto & ref_beta = data_ptr->conj_grad.beta;
     
     auto prev_r_dot_r = data_ptr->conj_grad.r_dot_r;
-    ProgramData_computeCongGradR(data_ptr);
+    ProgramData_updateConjGradR(data_ptr);
     ProgramData_computeConjGradRDotR(data_ptr);
     auto r_dot_r = data_ptr->conj_grad.r_dot_r;
     
     ref_beta = r_dot_r/prev_r_dot_r;
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_updateConjGradP(upProgramData<Type, N> & data_ptr) noexcept {
+    #pragma omp parallel for simd collapse(2) schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_p = data_ptr->conj_grad.p[idx][jdx];
+            auto & ref_r = data_ptr->conj_grad.r[idx][jdx];
+            auto & ref_beta = data_ptr->conj_grad.beta;
+            
+            ref_p *= ref_beta;
+            ref_p += ref_r;
+        }
+    }
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_updateConjGradIterStep(upProgramData<Type, N> & data_ptr){
+    ProgramData_computeConjGradQ(data_ptr);
+    ProgramData_computeConjGradPDotQ(data_ptr);
+    ProgramData_computeConjGradAlpha(data_ptr);
+    ProgramData_updateConjGradX(data_ptr);
+    ProgramData_computeConjGradBeta(data_ptr);
+    ProgramData_updateConjGradP(data_ptr);
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_computeConjGradInit(upProgramData<Type, N> & data_ptr){
+    ProgramData_computeConjGradABulk(data_ptr);
+    ProgramData_computeConjGradB(data_ptr);
+    ProgramData_computeConjGradX(data_ptr);
+    ProgramData_computeConjGradY(data_ptr);
+    ProgramData_computeConjGradR(data_ptr);
+    ProgramData_computeConjGradRDotR(data_ptr);
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_computeConjGrad(upProgramData<Type, N> & data_ptr){
+    auto & ref_max_iter = data_ptr->conj_grad.max_iter;
+    
+    ProgramData_computeConjGradInit(data_ptr);
+    for(size_t idx = 0; idx < ref_max_iter; ++idx){
+        ProgramData_updateConjGradIterStep(data_ptr);
+    }
 }

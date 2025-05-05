@@ -252,7 +252,7 @@ void ProgramData_displayTests(upProgramData<Type, N> & data_ptr){
     ProgramData_displayPhiCurrTimesPhi(data_ptr);
     ProgramData_displayQuad(data_ptr);
     ProgramData_displayIntegrals(data_ptr);
-    ProgramData_displayLinAlgSolveMat(data_ptr);
+    //ProgramData_displayLinAlgSolveMat(data_ptr);
     ProgramData_displayBulkPropertyConductivity(data_ptr);
     ProgramData_displayDiscretizedMat(data_ptr);
 }
