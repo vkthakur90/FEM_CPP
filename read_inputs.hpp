@@ -7,6 +7,15 @@
 #include <string>  
 
 template <std::floating_point Type, size_t N>
+void ProgramData_readInputsSimBox(upProgramData<Type, N> & data_ptr, std::map<std::string, Type> & map) {
+    auto & len_x = data_ptr->sim_box.length_x;
+    auto & len_y = data_ptr->sim_box.length_y;
+    
+    len_x = (map["len_x"] > 0) ? map["len_x"] : 1.0;
+    len_y = (map["len_y"] > 0) ? map["len_y"] : 1.0;
+}
+
+template <std::floating_point Type, size_t N>
 void ProgramData_readInputsBulk(upProgramData<Type, N> & data_ptr, std::map<std::string, Type> & map) {
     #pragma omp parallel for simd collapse(2) schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
@@ -61,6 +70,7 @@ void ProgramData_displayResults(upProgramData<Type, N> & data_ptr, const char* f
 
 template <std::floating_point Type, size_t N>
 void ProgramData_readInputs(upProgramData<Type, N> & data_ptr, std::map<std::string, Type> & map) {
+    ProgramData_readInputsSimBox(data_ptr, map);
     ProgramData_readInputsBulk(data_ptr, map);
     ProgramData_readInputsBoundary(data_ptr, map);
 }
