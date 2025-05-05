@@ -4,6 +4,7 @@
 
 #include "read_inputs.hpp"
 #include "subroutines.hpp"
+#include "parse_input.hpp"
 #include <memory>
 #include <iostream>
 

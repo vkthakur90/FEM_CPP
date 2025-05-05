@@ -3,47 +3,8 @@
 #include "program_data.hpp"
 #include "utils.hpp"
 #include <memory>
-#include <fstream>      // for std::ifstream :contentReference[oaicite:0]{index=0}
-#include <iterator>     // for std::istreambuf_iterator :contentReference[oaicite:1]{index=1}
-#include <map>          // for std::map :contentReference[oaicite:2]{index=2}
-#include <regex>        // for std::regex, std::sregex_iterator :contentReference[oaicite:3]{index=3}
-#include <string>
-#include <stdexcept>
-#include <concepts>
-
-template <std::floating_point Type>
-std::map<std::string, Type>
-parse_params_from_file(const std::string& filename) {
-    // 1) Open file in binary/read mode
-    std::ifstream file{ filename, std::ios::in | std::ios::binary };
-    if (!file.is_open()) {
-        throw std::runtime_error{"Could not open file: " + filename};
-    }
-
-    // 2) Read entire file into a string in one shot
-    std::string content{
-        std::istreambuf_iterator<char>{file},
-        std::istreambuf_iterator<char>{}
-    };  // :contentReference[oaicite:4]{index=4}
-
-    // 3) Regex to match lines of the form: set <key> = <value>;
-    static const std::regex pat{
-        R"(\bset\s+(\w+)\s*=\s*([+-]?[0-9]+(?:\.[0-9]*)?)\s*;)"
-    };  // :contentReference[oaicite:5]{index=5}
-
-    std::map<std::string, Type> params;
-    // 4) Iterate over all non-overlapping matches in the file content
-    for (std::sregex_iterator it{content.begin(), content.end(), pat},
-         end{}; it != end; ++it) {
-        const auto& m = *it;
-        std::string key   = m[1].str();
-        double      value = std::stod(m[2].str());
-        params.emplace(std::move(key), value);
-    }  // :contentReference[oaicite:6]{index=6}
-
-    return params;
-}
-
+#include <map>
+#include <string>  
 
 template <std::floating_point Type, size_t N>
 void ProgramData_readInputsBulk(upProgramData<Type, N> & data_ptr, std::map<std::string, Type> & map) {
