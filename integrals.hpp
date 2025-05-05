@@ -3,35 +3,35 @@
 #include "program_data.hpp"
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsDiffPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsDiffPhiCurrTimesDiffPhi(upProgramData<Type, N> & data_ptr) noexcept {
     data_ptr->integrals.diff_phi_curr_times_diff_phi[0] = data_ptr->quad.diff_phi_curr_times_diff_phi.prev_integ;
     data_ptr->integrals.diff_phi_curr_times_diff_phi[1] = data_ptr->quad.diff_phi_curr_times_diff_phi.curr_integ;
     data_ptr->integrals.diff_phi_curr_times_diff_phi[2] = data_ptr->quad.diff_phi_curr_times_diff_phi.next_integ;
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsDiffPhiCurrTimesPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsDiffPhiCurrTimesPhi(upProgramData<Type, N> & data_ptr) noexcept {
     data_ptr->integrals.diff_phi_curr_times_phi[0] = data_ptr->quad.diff_phi_curr_times_phi.prev_integ;
     data_ptr->integrals.diff_phi_curr_times_phi[1] = data_ptr->quad.diff_phi_curr_times_phi.curr_integ;
     data_ptr->integrals.diff_phi_curr_times_phi[2] = data_ptr->quad.diff_phi_curr_times_phi.next_integ;
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsPhiCurrTimesDiffPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsPhiCurrTimesDiffPhi(upProgramData<Type, N> & data_ptr) noexcept {
     data_ptr->integrals.phi_curr_times_diff_phi[0] = data_ptr->quad.phi_curr_times_diff_phi.prev_integ;
     data_ptr->integrals.phi_curr_times_diff_phi[1] = data_ptr->quad.phi_curr_times_diff_phi.curr_integ;
     data_ptr->integrals.phi_curr_times_diff_phi[2] = data_ptr->quad.phi_curr_times_diff_phi.next_integ;
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsPhiCurrTimesPhi(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsPhiCurrTimesPhi(upProgramData<Type, N> & data_ptr) noexcept {
     data_ptr->integrals.phi_curr_times_phi[0] = data_ptr->quad.phi_curr_times_phi.prev_integ;
     data_ptr->integrals.phi_curr_times_phi[1] = data_ptr->quad.phi_curr_times_phi.curr_integ;
     data_ptr->integrals.phi_curr_times_phi[2] = data_ptr->quad.phi_curr_times_phi.next_integ;
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsCoeffXX(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsCoeffXX(upProgramData<Type, N> & data_ptr) noexcept {
     for(size_t idx = 0; idx < 3; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & x_fact = data_ptr->integrals.diff_phi_curr_times_diff_phi[idx];
@@ -44,7 +44,7 @@ void ProgramData_computeIntegralsCoeffXX(std::unique_ptr<ProgramData<Type, N>> &
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsCoeffXY(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsCoeffXY(upProgramData<Type, N> & data_ptr) noexcept {
     for(size_t idx = 0; idx < 3; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & x_fact = data_ptr->integrals.diff_phi_curr_times_phi[idx];
@@ -57,7 +57,7 @@ void ProgramData_computeIntegralsCoeffXY(std::unique_ptr<ProgramData<Type, N>> &
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegralsCoeffYY(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegralsCoeffYY(upProgramData<Type, N> & data_ptr) noexcept {
     for(size_t idx = 0; idx < 3; ++idx){
         for(size_t jdx = 0; jdx < 3; ++jdx){
             auto & x_fact = data_ptr->integrals.phi_curr_times_phi[idx];
@@ -70,7 +70,7 @@ void ProgramData_computeIntegralsCoeffYY(std::unique_ptr<ProgramData<Type, N>> &
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeIntegrals(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeIntegrals(upProgramData<Type, N> & data_ptr) noexcept {
     ProgramData_computeIntegralsDiffPhiCurrTimesDiffPhi(data_ptr);
     ProgramData_computeIntegralsDiffPhiCurrTimesPhi(data_ptr);
     ProgramData_computeIntegralsPhiCurrTimesDiffPhi(data_ptr);

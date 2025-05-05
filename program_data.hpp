@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <concepts>
+#include <memory>
 
 constexpr size_t SIMD_SIZE = 512; 
 constexpr size_t SIMPSON_SIZE = 2001;
@@ -111,6 +112,24 @@ struct LinAlgSolve{
 };
 
 template <std::floating_point Type, size_t N>
+struct ConjugateGradient {
+    size_t max_iter{10};
+    alignas(SIMD_SIZE/alignof(Type)) Type A[N][N][3][3]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type b[N][N]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type y[N][N]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type x[N][N]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type r[N][N]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type p[N][N]{};
+    alignas(SIMD_SIZE/alignof(Type)) Type q[N][N]{};
+    Type alpha{};
+    Type beta{};
+    Type tol{};
+    Type r_dor_r{};
+    Type next_r_dot_next_r{};
+    Type p_dot_q{};
+};
+
+template <std::floating_point Type, size_t N>
 struct ProgramData {
     size_t size{N};
     
@@ -124,5 +143,10 @@ struct ProgramData {
     IntegralTables<Type> integrals{};
     
     Discretized<Type, N> discretized{};
+    ConjugateGradient<Type, N> conj_grad{};
+    
     LinAlgSolve<Type, N> lin_alg_solve{};
 };
+
+template <std::floating_point Type, size_t N>
+using upProgramData = std::unique_ptr<ProgramData<Type, N>>;

@@ -3,7 +3,7 @@
 #include "program_data.hpp"
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeBulkLinAlgSolveMatIdentity(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeBulkLinAlgSolveMatIdentity(upProgramData<Type, N> & data_ptr) noexcept {
     auto & NUM = data_ptr->size;
     
     #pragma omp parallel for simd collapse(2) schedule(static)
@@ -16,7 +16,7 @@ void ProgramData_computeBulkLinAlgSolveMatIdentity(std::unique_ptr<ProgramData<T
 }
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeBulkLinAlgSolveMat(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeBulkLinAlgSolveMat(upProgramData<Type, N> & data_ptr) noexcept {
     #pragma omp parallel for simd collapse(4) schedule(static)
     for(size_t idx = 1; idx < data_ptr->size - 1; ++idx){
         for(size_t jdx = 1; jdx < data_ptr->size - 1; ++jdx){
@@ -40,7 +40,7 @@ void ProgramData_computeBulkLinAlgSolveMat(std::unique_ptr<ProgramData<Type, N>>
 
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeLinAlgSolveMat(std::unique_ptr<ProgramData<Type, N>> & data_ptr) noexcept {
+void ProgramData_computeLinAlgSolveMat(upProgramData<Type, N> & data_ptr) noexcept {
     ProgramData_computeBulkLinAlgSolveMatIdentity(data_ptr);
     ProgramData_computeBulkLinAlgSolveMat(data_ptr);
 }
