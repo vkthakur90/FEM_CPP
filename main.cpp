@@ -4,7 +4,7 @@
 
 #include "read_inputs.hpp"
 #include "subroutines.hpp"
-#include "test.hpp"
+#include "test/test.hpp"
 #include <memory>
 
 auto data_ptr = std::make_unique<ProgramData<double, MAX_N>>();
