@@ -4,10 +4,10 @@
 
 
 template <std::floating_point Type, size_t N>
-void ProgramData_computeConjGradABulk(upProgramData<Type, N> & data_ptr) noexcept {
+void ProgramData_computeConjGradA(upProgramData<Type, N> & data_ptr) noexcept {
     #pragma omp parallel for simd collapse(4) schedule(static)
-    for(size_t idx = 1; idx < data_ptr->size - 1; ++idx){
-        for(size_t jdx = 1; jdx < data_ptr->size - 1; ++jdx){
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             for(size_t mdx = 0; mdx < 3; ++mdx){
                 for(size_t ndx = 0; ndx < 3; ++ndx){
                     auto & ref_A = data_ptr->conj_grad.A[idx][jdx][mdx][ndx];
@@ -90,7 +90,7 @@ template <std::floating_point Type, size_t N>
 void ProgramData_computeConjGradX(upProgramData<Type, N> & data_ptr) noexcept {
     #pragma omp parallel for simd collapse(2) schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){ 
-        for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             auto & ref_x = data_ptr->conj_grad.x[idx][jdx];
             ref_x = static_cast<Type>(0);            
         }
@@ -102,7 +102,7 @@ void ProgramData_computeConjGradYBulk(upProgramData<Type, N> & data_ptr) noexcep
     #pragma omp parallel for collapse(2) schedule(static)
     for(size_t idx = 1; idx < data_ptr->size - 1; ++idx){
         for(size_t jdx = 1; jdx < data_ptr->size - 1; ++jdx){
-            auto & ref_y = data_ptr->data_ptr->conj_grad.y[idx][jdx];
+            auto & ref_y = data_ptr->conj_grad.y[idx][jdx];
             
             Type sum = static_cast<Type>(0);
             for(size_t mdx = 0; mdx < 3; ++mdx){
@@ -205,7 +205,7 @@ void ProgramData_computeConjGradQBulk(upProgramData<Type, N> & data_ptr) noexcep
     #pragma omp parallel for collapse(2) schedule(static)
     for(size_t idx = 1; idx < data_ptr->size - 1; ++idx){
         for(size_t jdx = 1; jdx < data_ptr->size - 1; ++jdx){
-            auto & ref_q = data_ptr->data_ptr->conj_grad.q[idx][jdx];
+            auto & ref_q = data_ptr->conj_grad.q[idx][jdx];
             
             Type sum = static_cast<Type>(0);
             for(size_t mdx = 0; mdx < 3; ++mdx){
@@ -384,11 +384,12 @@ void ProgramData_updateConjGradIterStep(upProgramData<Type, N> & data_ptr){
 
 template <std::floating_point Type, size_t N>
 void ProgramData_computeConjGradInit(upProgramData<Type, N> & data_ptr){
-    ProgramData_computeConjGradABulk(data_ptr);
+    ProgramData_computeConjGradA(data_ptr);
     ProgramData_computeConjGradB(data_ptr);
     ProgramData_computeConjGradX(data_ptr);
     ProgramData_computeConjGradY(data_ptr);
     ProgramData_computeConjGradR(data_ptr);
+    ProgramData_computeConjGradP(data_ptr);
     ProgramData_computeConjGradRDotR(data_ptr);
 }
 

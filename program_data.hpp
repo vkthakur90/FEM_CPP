@@ -123,7 +123,7 @@ struct ConjugateGradient {
     alignas(SIMD_SIZE/alignof(Type)) Type q[N][N]{};
     Type alpha{};
     Type beta{};
-    Type r_dor_r{};
+    Type r_dot_r{};
     Type p_dot_q{};
 };
 

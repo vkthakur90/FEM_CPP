@@ -14,7 +14,7 @@ int main(){
 
     ProgramData_compute(data_ptr);
     
-    ProgramData_displayTests(data_ptr);
+    ProgramData_displayConjGradX(data_ptr);
     
     return 0;
 }

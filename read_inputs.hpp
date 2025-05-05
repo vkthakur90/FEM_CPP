@@ -10,10 +10,12 @@ void ProgramData_readInputsConductivity(upProgramData<Type, N> & data_ptr) {
             auto & kxx = data_ptr->bulk_property.k_xx[idx][jdx];
             auto & kxy = data_ptr->bulk_property.k_xy[idx][jdx];
             auto & kyy = data_ptr->bulk_property.k_yy[idx][jdx];
+            auto & q_rate = data_ptr->bulk_property.q_rate[idx][jdx];
             
             kxx = 0.01f;
             kxy = 0.0f;
             kyy = 0.01f;
+            q_rate = 1.0f;
         }
     }
 }

@@ -243,6 +243,130 @@ void ProgramData_displayDiscretizedMat(upProgramData<Type, N> & data_ptr) {
 }
 
 template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradA(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_A.txt", "w");
+
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            for(size_t mdx = 0; mdx < 3; ++mdx){
+                for(size_t ndx = 0; ndx < 3; ++ndx){
+                    auto & ref_A = data_ptr->discretized.mat[idx][jdx][mdx][ndx];
+                    std::fprintf(
+                        file.get(),
+                        "%d\t%d\t%d\t%d\t\t%f\n",
+                        idx, jdx, mdx, ndx, 
+                        ref_A
+                    );
+                }
+            }
+            std::fprintf(file.get(), "\n");
+        }
+    }        
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradB(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_b.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_x = data_ptr->conj_grad.b[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_x 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradY(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_y.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_y = data_ptr->conj_grad.y[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_y 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradR(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_r.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_r = data_ptr->conj_grad.r[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_r 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradP(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_p.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_p = data_ptr->conj_grad.p[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_p 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradX(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_x.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_x = data_ptr->conj_grad.x[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_x 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayConjGradQ(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/conj_grad_q.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_q = data_ptr->conj_grad.q[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%d\t%d\t\t%f\n",
+                idx, jdx, ref_q 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
+}
+
+template <std::floating_point Type, size_t N>
 void ProgramData_displayTests(upProgramData<Type, N> & data_ptr){
     ProgramData_displayPhi(data_ptr);
     ProgramData_displayDiffPhi(data_ptr);
@@ -252,7 +376,7 @@ void ProgramData_displayTests(upProgramData<Type, N> & data_ptr){
     ProgramData_displayPhiCurrTimesPhi(data_ptr);
     ProgramData_displayQuad(data_ptr);
     ProgramData_displayIntegrals(data_ptr);
-    //ProgramData_displayLinAlgSolveMat(data_ptr);
     ProgramData_displayBulkPropertyConductivity(data_ptr);
     ProgramData_displayDiscretizedMat(data_ptr);
+    ProgramData_displayConjGradX(data_ptr);
 }
