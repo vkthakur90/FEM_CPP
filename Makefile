@@ -1,6 +1,6 @@
 CXX = g++
 
-MAX_N ?= 10
+MAX_N ?= 100
 
 CFLAGS = --std=c++20 -O3 -march=native -fopenmp -fopenmp-simd -DMAX_N=$(MAX_N)
 

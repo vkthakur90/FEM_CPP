@@ -113,7 +113,7 @@ struct LinAlgSolve{
 
 template <std::floating_point Type, size_t N>
 struct ConjugateGradient {
-    size_t max_iter{10};
+    size_t max_iter{100};
     alignas(SIMD_SIZE/alignof(Type)) Type A[N][N][3][3]{};
     alignas(SIMD_SIZE/alignof(Type)) Type b[N][N]{};
     alignas(SIMD_SIZE/alignof(Type)) Type y[N][N]{};

@@ -1,5 +1,5 @@
 #ifndef MAX_N
-#define MAX_N 10
+#define MAX_N 100
 #endif
 
 #include "read_inputs.hpp"
@@ -14,7 +14,7 @@ int main(){
 
     ProgramData_compute(data_ptr);
     
-    ProgramData_displayConjGradX(data_ptr);
+    ProgramData_displayResults(data_ptr);
     
     return 0;
 }

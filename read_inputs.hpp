@@ -1,6 +1,7 @@
 #pragma once
 
 #include "program_data.hpp"
+#include "utils.hpp"
 #include <memory>
 
 template <std::floating_point Type, size_t N>
@@ -18,6 +19,25 @@ void ProgramData_readInputsConductivity(upProgramData<Type, N> & data_ptr) {
             q_rate = 1.0f;
         }
     }
+}
+
+template <std::floating_point Type, size_t N>
+void ProgramData_displayResults(upProgramData<Type, N> & data_ptr){
+    auto file = make_unique_file("outputs/fem_soln.txt", "w");
+    
+    for(size_t idx = 0; idx < data_ptr->size ; ++idx){
+        for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
+            auto & ref_x = data_ptr->grid.x[idx][jdx];
+            auto & ref_y = data_ptr->grid.y[idx][jdx];
+            auto & ref_T = data_ptr->conj_grad.x[idx][jdx];
+            std::fprintf(
+                file.get(),
+                "%f\t%f\t\t%f\n",
+                ref_x, ref_y, ref_T 
+            );
+        }
+        std::fprintf(file.get(), "\n");
+    }       
 }
 
 template <std::floating_point Type, size_t N>
