@@ -92,8 +92,26 @@ void ProgramData_computeConjGradX(upProgramData<Type, N> & data_ptr) noexcept {
     for(size_t idx = 0; idx < data_ptr->size; ++idx){ 
         for(size_t jdx = 0; jdx < data_ptr->size; ++jdx){
             auto & ref_x = data_ptr->conj_grad.x[idx][jdx];
-            ref_x = static_cast<Type>(0);            
+            ref_x = static_cast<Type>(0.0);            
         }
+    }
+    
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        auto & ref_top = data_ptr->boundary.top[idx];
+        auto & ref_bottom = data_ptr->boundary.bottom[idx];
+        auto & ref_left = data_ptr->boundary.left[idx];
+        auto & ref_right = data_ptr->boundary.right[idx];
+        
+        auto & ref_bottom_x = data_ptr->conj_grad.x[idx][0];
+        auto & ref_top_x = data_ptr->conj_grad.x[idx][data_ptr->size - 1];
+        auto & ref_left_x = data_ptr->conj_grad.x[0][idx];
+        auto & ref_right_x = data_ptr->conj_grad.x[data_ptr->size - 1][idx];
+                
+        ref_top_x = ref_top;
+        ref_bottom_x = ref_bottom;
+        ref_left_x = ref_left;
+        ref_right_x = ref_right;
     }
 }
 
@@ -183,6 +201,19 @@ void ProgramData_computeConjGradR(upProgramData<Type, N> & data_ptr) noexcept {
             
             ref_r = ref_b - ref_y;
         }
+    }
+    
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        auto & ref_bottom = data_ptr->conj_grad.r[idx][0];
+        auto & ref_top = data_ptr->conj_grad.r[idx][data_ptr->size - 1];
+        auto & ref_left = data_ptr->conj_grad.r[0][idx];
+        auto & ref_right = data_ptr->conj_grad.r[data_ptr->size - 1][idx];
+        
+        ref_top = static_cast<Type>(0);
+        ref_bottom = static_cast<Type>(0);
+        ref_left = static_cast<Type>(0);
+        ref_right = static_cast<Type>(0);
     }
 }
 
@@ -354,7 +385,7 @@ void ProgramData_computeConjGradBeta(upProgramData<Type, N> & data_ptr) noexcept
     ProgramData_computeConjGradRDotR(data_ptr);
     auto r_dot_r = data_ptr->conj_grad.r_dot_r;
     
-    ref_beta = r_dot_r/prev_r_dot_r;
+    ref_beta = r_dot_r/(prev_r_dot_r + 1.0e-6);
 }
 
 template <std::floating_point Type, size_t N>

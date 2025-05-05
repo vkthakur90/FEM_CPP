@@ -4,12 +4,17 @@
 
 #include "read_inputs.hpp"
 #include "subroutines.hpp"
-#include "test/test.hpp"
 #include <memory>
 
-auto data_ptr = std::make_unique<ProgramData<double, MAX_N>>();
+#ifdef DEBUG
+#include "test/test.hpp"
+#endif
 
-int main(){    
+
+
+int main(){
+    auto data_ptr = std::make_unique<ProgramData<double, MAX_N>>();
+    
     ProgramData_readInputs(data_ptr);
 
     ProgramData_compute(data_ptr);
