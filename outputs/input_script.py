@@ -1,23 +1,21 @@
-import femsolver
-
-# pick the templated version you need, e.g. float, N=100
-Solver = femsolver.FemSolver_f100
+import femsolver as fs
 
 # create solver
-sol = Solver()    # len_x=1.0, len_y=2.0
+sol = fs.FemSolver_f100() 
 
-sol.set_dimensions(1.0, 1.0)
+sol.length_x(1.0)
+sol.length_y(2.0)
 
 # set material tensors and boundary conditions
-sol.set_k_xx(0.1)
-sol.set_k_xy(0.0)
-sol.set_k_yy(0.1)
-sol.set_q_rate(0.0)
+sol.k_xx(0.1)
+sol.k_xy(0.0)
+sol.k_yy(0.1)
+sol.q_rate(1.0)
 
-sol.set_boundary_top(1)
-sol.set_boundary_bottom(0)
-sol.set_boundary_left(1)
-sol.set_boundary_right(0)
+sol.boundary_top(0.0)
+sol.boundary_bottom(0.0)
+sol.boundary_left(0.0)
+sol.boundary_right(0.0)
 
 # run the FEM solve
 sol.compute()
