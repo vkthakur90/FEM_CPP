@@ -14,23 +14,25 @@ void register_fem_solver(py::module &m, const std::string &suffix) {
     py::class_<Solver>(m, pyname.c_str())
         .def(py::init<>(),
              "Construct a FemSolver")
-        .def("set_dimensions", &Solver::set_dimensions, py::arg("length_x"), py::arg("length_y"),
-             "Set Dimension of 2D box with len_x and len_y")     
-        .def("set_k_xx", &Solver::set_k_xx, py::arg("val"),
+        .def("length_x", &Solver::set_length_x, py::arg("val"),
+             "Set length_x over the grid with value val.")
+        .def("length_y", &Solver::set_length_y, py::arg("val"),
+             "Set length_y over the grid with value val.")             
+        .def("k_xx", &Solver::set_k_xx, py::arg("val"),
              "Set k_xx over the grid with value val.")
-        .def("set_k_xy", &Solver::set_k_xy, py::arg("val"),
+        .def("k_xy", &Solver::set_k_xy, py::arg("val"),
              "Set k_xy over the grid with value val.")
-        .def("set_k_yy", &Solver::set_k_yy, py::arg("val"),
+        .def("k_yy", &Solver::set_k_yy, py::arg("val"),
              "Set k_yy over the grid with value val.")
-        .def("set_q_rate", &Solver::set_q_rate, py::arg("val"),
+        .def("q_rate", &Solver::set_q_rate, py::arg("val"),
              "Set q_rate over the grid with value val.")
-        .def("set_boundary_top", &Solver::set_boundary_top, py::arg("val"),
+        .def("boundary_top", &Solver::set_boundary_top, py::arg("val"),
              "Set top boundary with value val.")
-        .def("set_boundary_bottom", &Solver::set_boundary_bottom, py::arg("val"),
+        .def("boundary_bottom", &Solver::set_boundary_bottom, py::arg("val"),
              "Set bottom boundary with value val.")
-        .def("set_boundary_left", &Solver::set_boundary_left, py::arg("val"),
+        .def("boundary_left", &Solver::set_boundary_left, py::arg("val"),
              "Set left boundary with a function f(x,y).")
-        .def("set_boundary_right", &Solver::set_boundary_right, py::arg("val"),
+        .def("boundary_right", &Solver::set_boundary_right, py::arg("val"),
              "Set right boundary with value val.")
         .def("compute", &Solver::compute,
              "Run the solver (assemble & conjugate gradient).")

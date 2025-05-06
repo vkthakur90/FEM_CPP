@@ -12,11 +12,12 @@ class FemSolver {
 public:
     FemSolver() : data_ptr(std::make_unique<ProgramData<Type, N>>()) {}
     
-    void set_dimensions(Type len_x, Type len_y){
-        data_ptr->sim_box.length_x = (len_x > 0) ? len_x : 1.0;
-        data_ptr->sim_box.length_y = (len_y > 0) ? len_y : 1.0; 
-        
-        ProgramData_computeGrid(data_ptr);
+    void set_length_x(Type val){
+        data_ptr->sim_box.length_x = (val > 0) ? val : 1.0;
+    }
+    
+    void set_length_y(Type val){
+        data_ptr->sim_box.length_y = (val > 0) ? val : 1.0;
     }
     
     void set_k_xx(Type val){
