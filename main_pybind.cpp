@@ -14,26 +14,16 @@ void register_fem_solver(py::module &m, const std::string &suffix) {
     py::class_<Solver>(m, pyname.c_str())
         .def(py::init<>(),
              "Construct a FemSolver")
-        .def("length_x", &Solver::set_length_x, py::arg("val"),
-             "Set length_x over the grid with value val.")
-        .def("length_y", &Solver::set_length_y, py::arg("val"),
-             "Set length_y over the grid with value val.")             
-        .def("k_xx", &Solver::set_k_xx, py::arg("val"),
-             "Set k_xx over the grid with value val.")
-        .def("k_xy", &Solver::set_k_xy, py::arg("val"),
-             "Set k_xy over the grid with value val.")
-        .def("k_yy", &Solver::set_k_yy, py::arg("val"),
-             "Set k_yy over the grid with value val.")
-        .def("q_rate", &Solver::set_q_rate, py::arg("val"),
-             "Set q_rate over the grid with value val.")
-        .def("boundary_top", &Solver::set_boundary_top, py::arg("val"),
-             "Set top boundary with value val.")
-        .def("boundary_bottom", &Solver::set_boundary_bottom, py::arg("val"),
-             "Set bottom boundary with value val.")
-        .def("boundary_left", &Solver::set_boundary_left, py::arg("val"),
-             "Set left boundary with a function f(x,y).")
-        .def("boundary_right", &Solver::set_boundary_right, py::arg("val"),
-             "Set right boundary with value val.")
+        .def_property("length_x", nullptr, &Solver::set_length_x)
+        .def_property("length_y", nullptr, &Solver::set_length_y)             
+        .def_property("k_xx", nullptr, &Solver::set_k_xx)
+        .def_property("k_xy", nullptr, &Solver::set_k_xy)
+        .def_property("k_yy", nullptr, &Solver::set_k_yy)
+        .def_property("q_rate", nullptr, &Solver::set_q_rate)
+        .def_property("boundary_top", nullptr, &Solver::set_boundary_top)
+        .def_property("boundary_bottom", nullptr, &Solver::set_boundary_bottom)
+        .def_property("boundary_left", nullptr, &Solver::set_boundary_left)
+        .def_property("boundary_right", nullptr, &Solver::set_boundary_right)
         .def("compute", &Solver::compute,
              "Run the solver (assemble & conjugate gradient).")
         .def("write_to_file", &Solver::write_to_file, py::arg("filename"),
