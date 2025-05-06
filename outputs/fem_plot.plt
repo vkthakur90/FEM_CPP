@@ -1,3 +1,6 @@
 set pm3d map
-set size square
-splot 'fem_soln.txt' u 1:2:3
+set size ratio -1
+set datafile separator ','
+set key autotitle columnhead
+
+splot 'fem_soln.csv' u 1:2:3
